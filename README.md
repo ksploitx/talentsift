@@ -1,8 +1,5 @@
 # Redrob Hackathon — Ranker
 
-**Team:** ksploitx  
-**Author:** Khushneet Singh
-
 ## Quick Start
 
 ```bash
@@ -47,3 +44,23 @@ Profiles with inconsistencies (skill proficiency vs duration mismatch, expert sk
 3. **Behavioral signals as multiplier** — a perfect-on-paper candidate who hasn't logged in for 6 months or has 5% response rate ranks lower than a slightly-less-perfect but engaged candidate.
 
 4. **No API calls** — fully offline, CPU-only, runs in <60 seconds.
+
+## Interactive Demo (Sandbox)
+
+```bash
+pip install streamlit pandas
+streamlit run sandbox/app.py
+```
+
+Upload a small JSONL sample (≤200 candidates), paste a JD, and explore
+ranked results interactively.  The demo runs features → honeypot → scoring →
+reasoning (retrieval and MMR diversity are skipped for uploaded samples since
+precomputed artifacts are built for the full 100K set).
+
+### Deployment
+
+**Target platform:** [Streamlit Community Cloud](https://streamlit.io/cloud)
+
+The app is deployable as-is — point Streamlit Cloud at this repo with
+`sandbox/app.py` as the entrypoint and `requirements.txt` for dependencies.
+No secrets or environment variables required.

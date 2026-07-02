@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Redrob Hackathon — Intelligent Candidate Ranking
-Author: Khushneet Singh (team: ksploitx)
 
 Final orchestrator: loads cached precompute/ artifacts, runs feature
 extraction → hybrid retrieval → honeypot detection → composite scoring →
