@@ -1,1 +1,5 @@
 # Requirements — populated as dependencies are added in later phases
+pyyaml
+rank_bm25
+sentence-transformers
+numpy

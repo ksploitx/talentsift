@@ -33,6 +33,10 @@ embedding_model_name: "BAAI/bge-small-en-v1.5"
 # 1.0 = pure relevance, 0.0 = pure diversity.
 mmr_lambda: 0.5
 
+# Reciprocal Rank Fusion constant (k). Higher k compresses rank differences.
+# Standard default from Cormack et al. paper.
+rrf_k: 60
+
 # ============================================================================
 # Feature extraction thresholds (used by src/features.py)
 # ============================================================================

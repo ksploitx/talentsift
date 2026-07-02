@@ -32,3 +32,18 @@ Loaded and inspected the first records of `data/candidates.jsonl` alongside `can
 - Added several features beyond the explicitly listed set (e.g., `experience_fit_score`, `consulting_only_career`, `avg_tenure_months`, `short_tenure_ratio`, `platform_engagement_score`, `verification_score`, `education_tier_score`, `offer_acceptance_rate`) because they are directly implied by `jd_requirements.yaml` disqualifiers and behavioral priorities. These enrich the scoring signal available in later phases.
 - `skill_count_by_proficiency` uses weighted proficiency scores (config-driven) rather than separate counts per proficiency level — this is more useful as a single scalar feature for scoring.
 
+## 2026-07-02 — Phase 3, Subphases 3.1–3.4: Hybrid retrieval (BM25 + embeddings)
+
+**Files touched:**
+- Rewritten: `precompute/build_bm25_index.py` (from placeholder to full implementation)
+- Rewritten: `precompute/build_embeddings.py` (from placeholder to full implementation)
+- Rewritten: `src/retrieval.py` (from placeholder to full implementation)
+- Modified: `config.yaml` (added `rrf_k: 60`)
+- Modified: `requirements.txt` (added `rank_bm25`, `sentence-transformers`, `numpy`, `pyyaml`)
+- Modified: `CHANGELOG.md`
+
+**Description:**
+Implemented the full hybrid retrieval pipeline. `build_bm25_index.py` loads all 100k candidates from `candidates.jsonl`, concatenates each candidate's summary + skill names + career descriptions, tokenizes with whitespace splitting, builds a `BM25Okapi` index with k1/b from config.yaml, and serializes to `bm25_index.pkl`. `build_embeddings.py` loads the `BAAI/bge-small-en-v1.5` model from config, builds the same concatenated text, embeds all candidates in batches of 256 with L2-normalization (so dot product = cosine similarity), and saves to `embeddings.npy` + `candidate_ids.json`. `src/retrieval.py` loads all cached artifacts at runtime (never rebuilds), embeds the JD text once, computes per-candidate BM25 scores and cosine similarities, ranks independently, and fuses with Reciprocal Rank Fusion: `RRF(c) = 1/(k + rank_bm25) + 1/(k + rank_dense)` where k=60 from config. Returns top-k candidates with their fused score and component ranks.
+
+**Deviations from spec:**
+- None. All parameters live in config.yaml. No LLM API calls. No index-building in src/.
