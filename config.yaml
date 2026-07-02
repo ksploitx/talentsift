@@ -32,3 +32,83 @@ embedding_model_name: "BAAI/bge-small-en-v1.5"
 # Lambda for Maximal Marginal Relevance (MMR) diversity re-ranking.
 # 1.0 = pure relevance, 0.0 = pure diversity.
 mmr_lambda: 0.5
+
+# ============================================================================
+# Feature extraction thresholds (used by src/features.py)
+# ============================================================================
+
+# Maps company_size enum to a numeric score for ranking.
+company_size_scores:
+  "1-10": 1
+  "11-50": 2
+  "51-200": 3
+  "201-500": 4
+  "501-1000": 5
+  "1001-5000": 6
+  "5001-10000": 7
+  "10001+": 8
+
+# Consulting/services firms — entire-career-only triggers a disqualifier flag.
+consulting_firms:
+  - "TCS"
+  - "Infosys"
+  - "Wipro"
+  - "Accenture"
+  - "Cognizant"
+  - "Capgemini"
+  - "Mindtree"
+  - "HCL Technologies"
+  - "Tech Mahindra"
+  - "LTIMindtree"
+
+# Location tier mapping (keys lowercased for case-insensitive matching).
+# tier values: 1 = preferred office city, 2 = nearby metro, 3 = India other, 4 = international
+location_tiers:
+  "noida": 1
+  "pune": 1
+  "hyderabad": 2
+  "mumbai": 2
+  "delhi ncr": 2
+  "delhi": 2
+  "gurgaon": 2
+  "gurugram": 2
+  "bangalore": 3
+  "bengaluru": 3
+  "chennai": 3
+  "kolkata": 3
+  "ahmedabad": 3
+  "jaipur": 3
+location_default_india_tier: 3
+location_default_international_tier: 4
+
+# Notice period buckets in days — used for scoring.
+notice_period_thresholds:
+  ideal_max_days: 30
+  acceptable_max_days: 60
+  long_max_days: 90
+
+# Skill proficiency level weights for counting.
+proficiency_weights:
+  beginner: 0.25
+  intermediate: 0.5
+  advanced: 1.0
+  expert: 1.5
+
+# Education institution tier scores.
+education_tier_scores:
+  tier_1: 4
+  tier_2: 3
+  tier_3: 2
+  tier_4: 1
+  unknown: 1
+
+# Reference date for computing days_since_active. Set to submission deadline.
+reference_date: "2026-06-30"
+
+# Ideal experience range from JD (used for experience fit scoring).
+experience_range:
+  min_years: 5
+  max_years: 9
+
+# Minimum job tenure in months before it counts as "job-hopping".
+min_tenure_months: 18

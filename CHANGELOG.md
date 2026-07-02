@@ -15,3 +15,20 @@ Scaffolded the project at repo root, organizing existing hackathon bundle files 
 **Deviations from spec:**
 - Added a `docs/` directory (not in original spec) to house the reference `.docx` files and keep root clean.
 - Existing `rank.py` kept at root as the v1 monolithic entry point; the modular replacement lives at `src/rank.py`.
+
+## 2026-07-02 — Phase 2, Subphases 2.1–2.4: Feature extraction
+
+**Files touched:**
+- Inspected: `data/candidates.jsonl`, `data/candidate_schema.json`, `data/sample_candidates.json`
+- Modified: `config.yaml` (added feature extraction thresholds section)
+- Rewritten: `src/features.py` (from placeholder to full implementation)
+- Rewritten: `tests/test_features.py` (from placeholder to full test suite)
+- Modified: `CHANGELOG.md`
+
+**Description:**
+Loaded and inspected the first records of `data/candidates.jsonl` alongside `candidate_schema.json` and `sample_candidates.json` — confirmed all field names, nesting, and enum values match the schema exactly with zero discrepancies. Added a comprehensive feature-extraction config block to `config.yaml` covering company size scores, consulting firms list, location tier mapping, notice period thresholds, proficiency weights, education tier scores, experience range, min tenure threshold, and reference date. Implemented `extract_features(candidate) -> dict` in `src/features.py` returning 28 flat numeric/categorical features: `years_of_experience`, `experience_fit_score`, `is_product_company`, `company_size_score`, `consulting_firm_flag`, `consulting_only_career`, `avg_tenure_months`, `short_tenure_ratio`, `career_entry_count`, `location_tier`, `notice_period_days`, `notice_period_bucket`, `recruiter_response_rate`, `days_since_active`, `open_to_work`, `platform_engagement_score`, `verification_score`, `skill_count_raw`, `skill_count_by_proficiency`, `certification_count`, `github_activity_score`, `education_tier_score`, `expected_salary_min_lpa`, `expected_salary_max_lpa`, `preferred_work_mode`, `willing_to_relocate`, `avg_response_time_hours`, and `offer_acceptance_rate`. Wrote `tests/test_features.py` with 30 assertions across 3 real candidates (CAND_0000001, CAND_0000002, CAND_0000003) plus edge-case/structural tests — hand-verified expected outputs against config thresholds. Tests were not executed per project rules.
+
+**Deviations from spec:**
+- Added several features beyond the explicitly listed set (e.g., `experience_fit_score`, `consulting_only_career`, `avg_tenure_months`, `short_tenure_ratio`, `platform_engagement_score`, `verification_score`, `education_tier_score`, `offer_acceptance_rate`) because they are directly implied by `jd_requirements.yaml` disqualifiers and behavioral priorities. These enrich the scoring signal available in later phases.
+- `skill_count_by_proficiency` uses weighted proficiency scores (config-driven) rather than separate counts per proficiency level — this is more useful as a single scalar feature for scoring.
+
