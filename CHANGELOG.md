@@ -63,3 +63,9 @@ Extracted and verbatim-quoted the honeypot pattern description from `docs/submis
 **Deviations from spec:**
 - None. No hardcoded thresholds in src/. No LLM API calls. IsolationForest is trained offline in precompute/ and only loaded at runtime.
 
+
+## 2026-07-02 - Phase 5.1-5.4: Composite Weighted Scoring
+
+- **Files touched**: config.yaml, src/score.py, rank.py, CHANGELOG.md
+- **Description**: Implemented the composite scoring logic in src/score.py to compute raw scores for structured fit and behavioral signals from extracted features, and min-max normalize them alongside the retrieval scores across the entire population. Updated config.yaml with non-zero scoring weights for calibration. Rewrote the root rank.py to integrate Phase 2 (features), Phase 3 (retrieval), Phase 4 (honeypot), and Phase 5 (score) into a streamlined runtime script that outputs a full ranked_candidates.csv table, applying the honeypot score as a multiplicative penalty.
+- **Deviations**: Replaced the entire monolithic rank.py script with a clean pipeline execution script calling the newly modularized src/ functions, rather than keeping unused legacy components. Used a simple additive heuristic for raw structured-fit and behavioral components prior to min-max scaling since specific aggregation rules weren't mandated.

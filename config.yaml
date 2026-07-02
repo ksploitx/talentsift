@@ -8,9 +8,9 @@
 # Controls how much each pillar contributes to the final candidate score.
 # Will be calibrated in Phase 5; leave at 0 until then.
 weights:
-  retrieval: 0       # Weight for BM25 + dense retrieval relevance score
-  structured_fit: 0  # Weight for rule-based structured feature matching (skills, career, experience, location)
-  behavioral: 0      # Weight for platform engagement / availability signals (activity, response rate, notice period)
+  retrieval: 0.5       # Weight for BM25 + dense retrieval relevance score
+  structured_fit: 0.3  # Weight for rule-based structured feature matching (skills, career, experience, location)
+  behavioral: 0.2      # Weight for platform engagement / availability signals (activity, response rate, notice period)
 
 # Number of candidates to include in the final ranked shortlist.
 shortlist_size: 100
