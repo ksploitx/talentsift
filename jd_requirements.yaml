@@ -1,0 +1,131 @@
+# JD -> computable rubric for Redrob "Intelligent Candidate Discovery & Ranking" role.
+# Every entry here traces back to a specific paragraph in job_description.md.
+# Keep this file as the single source of truth for weights/keywords so scoring
+# logic in src/score.py never hardcodes a magic string or number.
+
+experience_band:
+  min_years: 5
+  max_years: 9
+  soft: true          # JD explicitly says "range not requirement" -- penalize gently, don't filter
+
+ideal_profile:
+  total_years_min: 6
+  total_years_max: 8
+  applied_ml_years_min: 4
+  applied_ml_years_max: 5
+
+# "Things you absolutely need" -- section header in job_description.md
+must_have_skills:
+  embeddings_retrieval:
+    keywords: ["sentence-transformers", "sentence transformers", "bge", "e5",
+               "openai embeddings", "embedding", "embeddings", "dense retrieval",
+               "semantic search", "vector representation"]
+  vector_db_hybrid_search:
+    keywords: ["pinecone", "weaviate", "qdrant", "milvus", "opensearch",
+               "elasticsearch", "faiss", "vector database", "hybrid search",
+               "vector search", "ann index", "approximate nearest neighbor"]
+  python:
+    keywords: ["python"]
+  eval_frameworks:
+    keywords: ["ndcg", "mrr", "map@", "mean average precision", "a/b test",
+               "ab test", "offline evaluation", "online evaluation",
+               "precision@", "recall@", "ranking evaluation", "click-through rate"]
+
+# "Things we'd like you to have but won't reject you for"
+nice_to_have_skills:
+  finetuning:
+    keywords: ["lora", "qlora", "peft", "fine-tuning", "finetuning", "fine tune"]
+  learning_to_rank:
+    keywords: ["xgboost", "lightgbm", "learning to rank", "learning-to-rank", "ltr model"]
+  hr_tech:
+    keywords: ["hr tech", "recruiting tech", "recruitment platform", "talent marketplace",
+               "ats", "applicant tracking"]
+  distributed_systems:
+    keywords: ["distributed systems", "kafka", "spark", "large-scale inference",
+               "inference optimization", "sharding", "horizontal scaling"]
+  open_source:
+    keywords: ["open source", "open-source", "github.com", "published a paper",
+               "conference talk", "oss contributor", "arxiv"]
+
+# Role-relevance keywords used against title + headline + summary + career descriptions.
+# This is what catches the "Tier 5 candidate who never said RAG or Pinecone" case --
+# it's deliberately broader than the must-have skill lists above.
+role_relevance_keywords:
+  - "machine learning"
+  - "ml engineer"
+  - "recommendation"
+  - "recommender"
+  - "ranking"
+  - "retrieval"
+  - "search relevance"
+  - "information retrieval"
+  - "nlp"
+  - "natural language processing"
+  - "rag"
+  - "retrieval-augmented"
+  - "large language model"
+  - "llm"
+  - "data scientist"
+  - "applied scientist"
+  - "personalization"
+  - "matching system"
+
+# "People who have only worked at consulting firms" disqualifier
+service_only_companies:
+  - "tcs"
+  - "infosys"
+  - "wipro"
+  - "accenture"
+  - "cognizant"
+  - "capgemini"
+  - "tech mahindra"
+  - "hcl"
+  - "mindtree"
+  - "l&t infotech"
+  - "mphasis"
+
+# "People whose primary expertise is computer vision, speech, or robotics" disqualifier
+non_fit_domain_keywords:
+  - "computer vision"
+  - "image classification"
+  - "object detection"
+  - "speech recognition"
+  - "robotics"
+  - "autonomous vehicle"
+  - "slam"
+
+# Titles that trigger the "senior but hasn't written code in 18mo" check
+non_ic_seniority_titles:
+  - "principal"
+  - "staff"
+  - "director"
+  - "vp"
+  - "vice president"
+  - "head of"
+  - "architect"
+  - "engineering manager"
+
+# Location logistics -- job_description.md "On location, comp, and logistics"
+preferred_locations:
+  - "pune"
+  - "noida"
+target_ok_locations:
+  - "pune"
+  - "noida"
+  - "delhi"
+  - "gurgaon"
+  - "gurugram"
+  - "hyderabad"
+  - "mumbai"
+notice_period_soft_max_days: 30
+
+# Weights used in src/score.py -- centralized here so tuning never touches code
+weights:
+  must_have_skill_match: 0.28
+  role_relevance: 0.20
+  seniority_experience_fit: 0.12
+  nice_to_have_bonus: 0.08
+  logistics_fit: 0.07
+  behavioral_availability: 0.15
+  disqualifier_penalty: 0.35   # subtracted, not part of the positive sum
+  skill_credibility_gap_penalty: 0.15  # subtracted
