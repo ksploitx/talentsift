@@ -81,3 +81,13 @@ Extracted and verbatim-quoted the honeypot pattern description from `docs/submis
 - **Files touched**: src/reasoning.py, CHANGELOG.md
 - **Description**: Implemented `generate_reasoning()` in src/reasoning.py. The function takes a raw candidate dict, its extracted features, and an optional score breakdown row, then assembles a multi-sentence reasoning string from real values: current title, company, years of experience, top 2–3 skills (sorted by proficiency tier → endorsements → duration), notice period with bucket label, score component breakdown, notable strengths (product company, GitHub activity, platform engagement, preferred location, education tier), and flagged concerns (non-preferred location, consulting-only career, job-hopping, experience out of range, honeypot risk). Pure string formatting — no LLM or API calls.
 - **Deviations**: None.
+
+## 2026-07-02 — Phase 8.1–8.3: rank.py Orchestrator
+
+- **Files touched**: rank.py, CHANGELOG.md
+- **Description**: Rewrote rank.py as the final single-CLI orchestrator wiring all six modules: `features.py` → `retrieval.py` → `honeypot.py` → `score.py` → `diversity.py` → `reasoning.py`. Accepts `--candidates data/candidates.jsonl --out submission.csv` (supports both JSONL and JSON input). Outputs the submission-format CSV with columns `candidate_id, rank, score, reasoning`. The script is the fast path only — it loads cached precompute artifacts, performs no index building, no embedding generation, no model training, and no network calls. Includes per-phase timing output.
+- **Precompute prerequisites** (must be run once before `rank.py`):
+  1. `python precompute/build_bm25_index.py` — builds BM25 index from candidates JSONL → `precompute/bm25_index.pkl`
+  2. `python precompute/build_embeddings.py` — generates dense embeddings → `precompute/embeddings.npy` + `precompute/candidate_ids.json`
+  3. `python precompute/build_honeypot_model.py` — trains IsolationForest → `precompute/honeypot_iforest.pkl`
+- **Deviations**: Moved entrypoint from `src/rank.py` to the repo-root `rank.py` since the spec uses `python rank.py` as the invocation pattern (consistent with the original monolithic script). Added `--jd` flag defaulting to `jd_requirements.yaml` so the JD text used for retrieval is configurable.
