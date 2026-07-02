@@ -116,3 +116,88 @@ experience_range:
 
 # Minimum job tenure in months before it counts as "job-hopping".
 min_tenure_months: 18
+
+# ============================================================================
+# Honeypot detection parameters (used by src/honeypot.py)
+# ============================================================================
+
+# Rule 1: Skill proficiency vs duration_months mismatch thresholds.
+honeypot_skill_duration_thresholds:
+  expert_min_months: 12     # Expert proficiency requires at least this many months
+  advanced_min_months: 6    # Advanced proficiency requires at least this many months
+  extreme_violation_count: 10  # 10+ violations is maximum suspicion
+
+# Rule 2: Career timeline inconsistency detection.
+honeypot_timeline_tolerance_months: 3   # Allow ±3 months date/duration mismatch
+honeypot_yoe_divergence_ratio: 2.0      # Flag if total career months > 2x stated YoE
+honeypot_max_single_tenure_months: 300  # Flag single tenures > 25 years
+honeypot_timeline_max_issues: 3         # 3 issues = maximum timeline penalty
+
+# Rule 3: Non-technical title patterns (substring match, case-insensitive).
+honeypot_non_technical_titles:
+  - "marketing"
+  - "hr "
+  - "human resource"
+  - "sales"
+  - "recruiter"
+  - "account manager"
+  - "business development"
+  - "content writer"
+  - "graphic designer"
+  - "operations manager"
+  - "admin"
+  - "receptionist"
+  - "coordinator"
+
+# Rule 3: AI/ML keywords for skill stuffing detection (substring match).
+honeypot_ai_ml_keywords:
+  - "ml"
+  - "machine learning"
+  - "deep learning"
+  - "neural"
+  - "nlp"
+  - "llm"
+  - "transformer"
+  - "bert"
+  - "gpt"
+  - "embedding"
+  - "rag"
+  - "fine-tun"
+  - "pytorch"
+  - "tensorflow"
+  - "computer vision"
+  - "reinforcement learning"
+  - "gan"
+  - "diffusion"
+  - "langchain"
+  - "vector database"
+  - "lora"
+
+# Rule 3: How many AI/ML skills (advanced+) before max penalty.
+honeypot_stuffing_skill_threshold: 3
+
+# Rule 4: Profile completeness vs thin career.
+honeypot_completeness_min: 85             # Only check if completeness >= this
+honeypot_thin_career_max_entries: 1       # Max career entries to be "thin"
+honeypot_thin_career_max_months: 12       # Max total months to be "thin"
+
+# Per-rule weights for combining rule penalties into a single rule score.
+honeypot_rule_weights:
+  skill_duration_mismatch: 0.30
+  career_timeline: 0.30
+  title_skill_stuffing: 0.25
+  completeness_vs_career: 0.15
+
+# Blend weights for combining rule score and isolation forest score.
+honeypot_blend_weights:
+  rules: 0.6
+  isolation_forest: 0.4
+
+# IsolationForest hyperparameters (used by precompute/build_honeypot_model.py).
+honeypot_isolation_forest:
+  n_estimators: 200
+  contamination: 0.005   # ~0.5% of candidates expected to be honeypots (~80/100k)
+  random_state: 42
+
+# Path to the pre-trained IsolationForest model artifact.
+honeypot_if_model_path: "precompute/honeypot_iforest.pkl"

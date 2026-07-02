@@ -47,3 +47,19 @@ Implemented the full hybrid retrieval pipeline. `build_bm25_index.py` loads all 
 
 **Deviations from spec:**
 - None. All parameters live in config.yaml. No LLM API calls. No index-building in src/.
+
+## 2026-07-02 — Phase 4, Subphases 4.1–4.5: Honeypot filtering
+
+**Files touched:**
+- Rewritten: `src/honeypot.py` (from placeholder to full implementation)
+- Created: `precompute/build_honeypot_model.py` (IsolationForest training script)
+- Modified: `config.yaml` (added ~85 lines of honeypot detection parameters)
+- Modified: `requirements.txt` (added `scikit-learn`)
+- Modified: `CHANGELOG.md`
+
+**Description:**
+Extracted and verbatim-quoted the honeypot pattern description from `docs/submission_spec.docx` (Section 7), `docs/README.docx`, and `docs/job_description.docx` at the top of `src/honeypot.py`. Implemented four explicit rule-based checks, each returning a partial penalty in [0, 1]: (1) skill proficiency vs `duration_months` mismatch — flags expert/advanced proficiency with implausibly low usage months, scaling by violation ratio and absolute count; (2) career timeline inconsistencies — detects stated `duration_months` that don't match start/end date spans, total career months far exceeding stated YoE, and implausibly long single tenures; (3) non-technical title with AI/ML skill stuffing — flags candidates whose title matches non-technical patterns (marketing, HR, sales, etc.) but who list multiple advanced/expert AI/ML skills; (4) profile completeness vs thin career mismatch — flags high `profile_completeness_score` (85+) paired with very few career entries or zero endorsements across many skills. Layered a scikit-learn `IsolationForest` as a second independent signal, trained offline on the full 26-feature numeric table from `features.py` via `precompute/build_honeypot_model.py`. Both layers are combined into a single `HoneypotResult` dataclass that exposes per-rule penalty values, a list of human-readable `rules_fired` descriptions, the isolation forest anomaly score, and the blended `honeypot_score` — all independently inspectable. All thresholds, keyword lists, weights, and IF hyperparameters live in `config.yaml`.
+
+**Deviations from spec:**
+- None. No hardcoded thresholds in src/. No LLM API calls. IsolationForest is trained offline in precompute/ and only loaded at runtime.
+
