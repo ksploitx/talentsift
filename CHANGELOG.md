@@ -69,3 +69,10 @@ Extracted and verbatim-quoted the honeypot pattern description from `docs/submis
 - **Files touched**: config.yaml, src/score.py, rank.py, CHANGELOG.md
 - **Description**: Implemented the composite scoring logic in src/score.py to compute raw scores for structured fit and behavioral signals from extracted features, and min-max normalize them alongside the retrieval scores across the entire population. Updated config.yaml with non-zero scoring weights for calibration. Rewrote the root rank.py to integrate Phase 2 (features), Phase 3 (retrieval), Phase 4 (honeypot), and Phase 5 (score) into a streamlined runtime script that outputs a full ranked_candidates.csv table, applying the honeypot score as a multiplicative penalty.
 - **Deviations**: Replaced the entire monolithic rank.py script with a clean pipeline execution script calling the newly modularized src/ functions, rather than keeping unused legacy components. Used a simple additive heuristic for raw structured-fit and behavioral components prior to min-max scaling since specific aggregation rules weren't mandated.
+
+## 2026-07-02 — Phase 6.1–6.4: MMR Diversity Re-ranking
+
+- **Files touched**: src/diversity.py, config.yaml, rank.py, CHANGELOG.md
+- **Description**: Implemented greedy Maximal Marginal Relevance in src/diversity.py. The module takes the top-N candidates by composite score (N = config diversity_pool_size, default 500), loads precomputed L2-normalized embeddings from Phase 3, builds the pairwise cosine similarity matrix over the pool, and iteratively selects 100 candidates maximizing `lambda * norm_score - (1 - lambda) * max_sim_to_selected`. Added `diversity_pool_size: 500` to config.yaml. Updated rank.py to call `mmr_rerank()` after composite scoring and output the final 100-candidate shortlist with `mmr_rank`.
+- **Deviations**: Pool scores are re-normalized to [0, 1] within the MMR pool (not the full population) so that the lambda trade-off between relevance and diversity is balanced on the same scale. This avoids the bottom of the pool always being dominated by the diversity term.
+

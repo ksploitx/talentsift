@@ -15,6 +15,10 @@ weights:
 # Number of candidates to include in the final ranked shortlist.
 shortlist_size: 100
 
+# Number of top-scoring candidates to feed into MMR diversity re-ranking.
+# Should be 3-5x shortlist_size to give MMR room to diversify.
+diversity_pool_size: 500
+
 # Honeypot score threshold above which a candidate is flagged and penalized.
 # Candidates scoring above this are considered profile-inconsistency traps.
 honeypot_threshold: 0.6
