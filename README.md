@@ -64,3 +64,7 @@ precomputed artifacts are built for the full 100K set).
 The app is deployable as-is — point Streamlit Cloud at this repo with
 `sandbox/app.py` as the entrypoint and `requirements.txt` for dependencies.
 No secrets or environment variables required.
+
+## Security
+
+Please refer to our [Security Policy](SECURITY.md) for information on reporting vulnerabilities and supported versions.

@@ -97,3 +97,9 @@ Extracted and verbatim-quoted the honeypot pattern description from `docs/submis
 - **Files touched**: sandbox/app.py, requirements.txt, README.md, CHANGELOG.md
 - **Description**: Implemented a Streamlit-based interactive demo in `sandbox/app.py`. The app provides a file uploader for small JSONL samples (hard-capped at 200 candidates), a JD text area, and a "Rank Candidates" button. On click it runs the pipeline by importing directly from `src/` — `extract_features`, `compute_honeypot_score`, `compute_composite_scores`, and `generate_reasoning`. Retrieval (Phase 3) and MMR diversity (Phase 6) are intentionally skipped because their precomputed artifacts are built for the full 100K candidate set and won't match uploaded samples; retrieval scores default to 0.0 and ranking is by composite score directly. Results display in a sortable table with progress-bar columns for honeypot penalty, structured fit, and behavioral scores, plus metric cards for summary stats. A CSV download button exports the submission-format file. Added `streamlit` and `pandas` to `requirements.txt`. Noted Streamlit Community Cloud as the intended deployment platform in README.md.
 - **Deviations**: Skipped retrieval and MMR diversity for uploaded samples (explained in module docstring and UI caption) — these phases require the precomputed BM25/embedding artifacts which only exist for the full 100K candidate set. This is a design tradeoff appropriate for a lightweight demo sandbox.
+
+## 2026-07-07 - Phase 11.1: Security Policy
+
+- **Files touched**: SECURITY.md, README.md, CHANGELOG.md
+- **Description**: Added a standard SECURITY.md file detailing supported versions and vulnerability reporting guidelines. Appended a link to the security policy in README.md to ensure visibility from the repository homepage.
+- **Deviations**: None.
